@@ -67,7 +67,7 @@ parser.add_argument(
     '-n', '--downsample', type=int, default=1, metavar='N',
     help='display every Nth sample (default: %(default)s)')
 parser.add_argument(
-    '-c', '--capture', type=int, default=1, metavar='N',
+    '-c', '--capture', type=int, default=0, metavar='N',
     help='capture positive sounds (default: %(default)s)')
 parser.add_argument(
     '-t', '--threshold', type=int, default=60,
