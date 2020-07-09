@@ -73,7 +73,7 @@ parser.add_argument(
     '-t', '--threshold', type=int, default=60,
     help='threshold for counting as positive (default: %(default)s)')
 parser.add_argument(
-    '-s', '--samples', type=int, default=6,
+    '-s', '--samples', type=int, default=4,
     help='threshold for positive samples to trigger response (default: %(default)s)')
 args = parser.parse_args(remaining)
 if any(c < 1 for c in args.channels):
@@ -129,12 +129,12 @@ def update_plot(frame):
         except queue.Empty:
             break
 
-    while len(data) > 10000:
+    while len(data) > 15000:
         #print(len(data))
-        if len(data) > 10000 and sneeze_count == 0:
-            shift = 10000
+        if len(data) > 15000:
+            shift = 15000
             if sneeze_count > 0:
-                shift = 2500
+                shift = 5000
             plotdata = np.roll(plotdata, -shift, axis=0)
             plotdata[-shift:, :] = data[:shift]
             data = data[shift:]
