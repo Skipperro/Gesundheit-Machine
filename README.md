@@ -1,6 +1,5 @@
-# Gesundheit-Machine
-
 ![Banner](/images/banner.png)
+# Gesundheit-Machine
 
 Allergy season is comming? People sneezing around you all the time? You are forced by weird social norms to respond with "Bless you / Gesundheit" to every sneeze around you and it distracts you and makes your code buggy?
 
