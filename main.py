@@ -114,14 +114,16 @@ def get_wave_normalized(file_path):
 def normalize_array(arr):
     return arr / (np.max(np.abs(arr)))
 
+X = []
+
 def update_plot(frame):
+    global X
     global plotdata
     global sneeze_count
     global last_sneeze
     global last_capture
 
     data = []
-
     # Get the new data
     while len(data) < 44100:
         try:
@@ -129,55 +131,61 @@ def update_plot(frame):
         except queue.Empty:
             break
 
-    while len(data) > 15000:
+    while len(data) > 4410:
         #print(len(data))
-        if len(data) > 15000:
-            shift = 15000
-            if sneeze_count > 0:
-                shift = 5000
+        if len(data) > 4410:
+            shift = 4410
             plotdata = np.roll(plotdata, -shift, axis=0)
             plotdata[-shift:, :] = data[:shift]
             data = data[shift:]
-        else:
-            if len(data) > 0:
-                shift = len(data)
-                plotdata = np.roll(plotdata, -shift, axis=0)
-                plotdata[-shift:, :] = data[:shift]
-                data=[]
+        #else:
+         #   if len(data) > 0:
+          #      shift = len(data)
+           #     plotdata = np.roll(plotdata, -shift, axis=0)
+            #    plotdata[-shift:, :] = data[:shift]
+             #   data=[]
 
         if time.time() - last_sneeze > 0.3 and plotdata.max() > 0.1:
-            X = [plotdata, plotdata, plotdata, plotdata]
-            X = np.array(X)
-            X = normalize_array(X)
-            start = time.time()
-            preds = model.predict(X)
-            prob = preds[0][0]
-            print(prob)
-            print("time: " + str(time.time()-start))
-            if time.time() - last_sneeze > 1.0 and prob > (args.threshold / 100.0):
-                sneeze_count += 1
+            X.append(plotdata)
 
-                if sneeze_count > args.samples:
-                    print('SNEEZE DETECTED!!')
-                    if args.capture:
-                        last_capture = time.time()
-                        allcaptures = os.listdir('./captures/')
-                        if allcaptures.__len__() > 1000:
-                            os.remove('./captures/' + str(random.choice(allcaptures)))
-                        write('./captures/' + str(uuid.uuid4()) + '.wav', 44100,
-                              np.array(X[0] * 32000, dtype='int16'))
-                        #continue
-                    song = AudioSegment.from_wav("./activation.wav")
-                    play(song)
-                    song = AudioSegment.from_wav(
-                        './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]))
-                    play(song)
-                    last_sneeze = time.time()
-            else:
-                if sneeze_count > 0:
-                    sneeze_count = 0
+            if len(X) > 10:
+                X = np.array(X)
+                X = normalize_array(X)
+                start = time.time()
+                preds = model.predict(X)
+                X = []
+                maxprob = 0.0
+
+                print("time: " + str(time.time() - start))
+                for i in range(len(preds)):
+                    prob = preds[i][0]
+                    if prob > maxprob:
+                        maxprob = prob
+                    if time.time() - last_sneeze > 1.0 and prob > (args.threshold / 100.0):
+                        sneeze_count += 1
+
+                        if sneeze_count > args.samples:
+                            print('SNEEZE DETECTED!!')
+                            if args.capture:
+                                last_capture = time.time()
+                                allcaptures = os.listdir('./captures/')
+                                if allcaptures.__len__() > 1000:
+                                    os.remove('./captures/' + str(random.choice(allcaptures)))
+                                write('./captures/' + str(uuid.uuid4()) + '.wav', 44100,
+                                      np.array(X[0] * 32000, dtype='int16'))
+                                #continue
+                            song = AudioSegment.from_wav("./activation.wav")
+                            play(song)
+                            song = AudioSegment.from_wav(
+                                './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]))
+                            play(song)
+                            last_sneeze = time.time()
+                    else:
+                        if sneeze_count > 0:
+                            sneeze_count = 0
+                print(maxprob)
         else:
-            print('silence')
+            X = []
             if sneeze_count > 0:
                 sneeze_count = 0
 
