@@ -73,7 +73,7 @@ parser.add_argument(
     '-t', '--threshold', type=int, default=60,
     help='threshold for counting as positive (default: %(default)s)')
 parser.add_argument(
-    '-s', '--samples', type=int, default=3,
+    '-s', '--samples', type=int, default=6,
     help='threshold for positive samples to trigger response (default: %(default)s)')
 args = parser.parse_args(remaining)
 if any(c < 1 for c in args.channels):
@@ -123,16 +123,16 @@ def update_plot(frame):
     data = []
 
     # Get the new data
-    while len(data) < 20000:
+    while len(data) < 44100:
         try:
-            data = q.get(block=True, timeout=1.0) # get_nowait()
+            data = q.get(block=True, timeout=10.0) # get_nowait()
         except queue.Empty:
             break
 
     while len(data) > 0:
         #print(len(data))
-        if len(data) > 10000:
-            shift = 10000
+        if len(data) > 4410:
+            shift = 4410
             plotdata = np.roll(plotdata, -shift, axis=0)
             plotdata[-shift:, :] = data[:shift]
             data = data[shift:]
@@ -191,9 +191,9 @@ try:
 
 
 
-    # Blocksize=40000 to prevent input overflow on Raspberry Pi.
+    # Blocksize=44100 to prevent input overflow on Raspberry Pi.
     stream = sd.InputStream(
-        device=args.device, blocksize=40000, channels=max(args.channels),
+        device=args.device, blocksize=44100, channels=max(args.channels),
         samplerate=args.samplerate, callback=audio_callback)
     #ani = FuncAnimation(fig, update_plot, interval=args.interval, blit=True)
 
