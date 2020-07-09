@@ -148,17 +148,7 @@ def update_plot(frame):
             X = np.array(X)
             preds = model.predict(normalize_array(X))
             prob = preds[0][0]
-            probstr = ""
-            for i in range(int(prob*50)):
-                probstr = probstr + "#"
-            for i in range(int(50 - (int(prob*50)))):
-                probstr += "-"
-
-            probstr += " " + str(int(prob*100))
-            os.system('clear')
-            print('Gesundheit Maschine - Listening...')
-            print('')
-            print(probstr)
+            print(prob)
             if time.time() - last_sneeze > 1.0 and prob > (args.threshold / 100.0):
                 sneeze_count += 1
 
@@ -177,17 +167,12 @@ def update_plot(frame):
                     song = AudioSegment.from_wav(
                         './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]))
                     play(song)
-                    os.system('clear')
-                    print('Gesundheit Maschine - Listening...')
                     last_sneeze = time.time()
             else:
                 if sneeze_count > 0:
                     sneeze_count = 0
         else:
-            os.system('clear')
-            print('Gesundheit Maschine - Listening...')
-            print('')
-            print('------------------- silence ---------------------- 0')
+            print('silence')
             if sneeze_count > 0:
                 sneeze_count -= 0
 
