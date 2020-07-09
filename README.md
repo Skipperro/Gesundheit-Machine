@@ -1,7 +1,7 @@
 ![Banner](/images/banner.png)
 # Gesundheit-Machine
 
-Allergy season is comming? People sneezing around you all the time? You are forced by weird social norms to respond with "Bless you / Gesundheit" to every sneeze around you and it distracts you and makes your code buggy?
+Allergy season is coming? People sneezing around you all the time? You are forced by some weird social norms to respond with "Bless you / Gesundheit" to every sneeze around you and it distracts you and makes your code buggy?
 
 What if there was an easy way to automate this social interaction and let you focus on what you really want to do?
 You can now do this with the state-of-the-art, AI-powered Gesundheit-Machine, Made-in-Germany, designed specifically for German market.
@@ -14,7 +14,7 @@ Gesundheit-Machine will sit on your desk and listen, just like Amazon Alexa, Goo
 
 It's a piece of software written in Python that uses Deep Neural Network created in Tensorflow/Keras. The neural network is trained to classify 1 second audio sample to tell if it sounds like a sneeze or not. 
 
-The software reads audio input from microphone every few milliseconds and sends most recent 1-second audio sample to neural network for classification. The network classifies each sample and decides if the sample sounds like a sneeze or not. If few samples in a row are positively classified a response sequence is triggered.
+The software constantly reads audio input from microphone and every few milliseconds sends most recent 1-second audio sample to neural network for classification. The network classifies each sample and decides if it sounds like a sneeze or not. If few samples in a row are positively classified a response sequence is triggered.
 
 ## Was it hard to develop?
 
@@ -28,21 +28,21 @@ There is no publicly available dataset of sneezes on the Internet. I had to make
 
 Luckly, for some weird reason, there is many compilations of people sneezing on YouTube. Don't know why someone would watch this stuff, but for me it was a base on which I could build my dataset. I've downloaded audio of every "sneeze" YouTube video I could find and manually extracted those 1 second parts where someone sneeze. This was my dataset of extracted sneezes but this was only the first step.
 
-For training I've also needed some examples of audio samples that are not sneeze. To generate them I've downloaded many other YouTube videos with ambient noise like office space, construction zone, party music, pub conversations, screaming kids ect. and wrote a code that would randomly cut those audio to 1-second samples.
+For training I've also needed some examples of audio samples that are not sneeze. To generate them I've downloaded many other YouTube videos with ambient noise like office space, construction zone, party music, pub conversations, screaming kids ect. and wrote a code that would randomly cut those audio into 1-second samples.
 
 To further improve detection accuracy I've also started to combine non-sneeze backgroud sounds with sneeze sample overlayed on top of it, so the AI could clearly see the difference between the two.
 
-But even this dataset is not perfect. For example, there is a VAST overrepresentation of female sneezes, because for some weird reason there are almost only "girls sneeze" compilations on YouTube and almost none of "boys", so naturally my AI is better on recognizing if a girl sneeze than if a boy sneeze.
+But even this dataset is not perfect. For example, there is a VAST overrepresentation of female sneezes, because for some weird reason there are almost only "sneezing girls" compilations on YouTube and almost none of "boys", so naturally my AI is better on recognizing if a female sneeze than if a male sneeze.
 
 I've also figured out, that it's better to miss some sneezes rather than trigger false-positive reaction when noone sneezed. To prevent false-positives I've created a first version of detection AI, set parameters to be very sensitive and let it listen... for days. Each time it thought it heard sneeze this 1-second audio sample was saved. After few days of listening what happens at my home and office I had thousends of detected sneezes that were false-positive, so I've added those to the dataset as well (as non-sneeze samples).
 
-I have now over 130.000 samples of 1-second audio, about 30% of them with sneeze, occupying about 12 GB of space.
+I have now over 130.000 unique samples of 1-second audio, about 30% of them with sneeze, occupying about 12 GB of space.
 
 At this point I was pretty convinced, that I own a best sneeze-detection dataset on the planet. :)
 
 ### Problem 2 - Not all sneezes are equal
 
-If you want to detect some trigger word like "Alexa", "OK Google" or "Hey Siri", it's way easier that detecting sneeze. People have different voices, but the overall "Trigger-word" melody is roughly the same for everyone. During development of this software I found out, that there is as many types of sneeze as there are people. You can have silent squeeks and loud roars, discrete cough or bursting explosion, single or multiple tones. Also the signal itself is much less distinct and shorten than other, classical "Trigger-words".
+If you want to detect some trigger word like "Alexa", "OK Google" or "Hey Siri", it's way easier that detecting sneeze. People have different voices, but the overall "Trigger-word" melody is roughly the same for everyone. During development of this software I found out, that it is not the case for sneezing. There is as many types of sneeze as there are people. You can have silent squeeks and loud roars, discrete cough or bursting explosion, single or multiple tones. Also the signal itself is much less distinct and shorten than the classical "Trigger-words".
 
 That's why there are still some false-positives I simply cannot erradicate from my algorithm, because they are too similar to real sneeze.
 
@@ -54,18 +54,19 @@ Some examples:
 * Screaming kids - too similar to female sneeze.
 * Dropping microphone - too similar to sneeze directly into the mic.
 * Blowing into the microphone - same problem.
-* Laughing - some people laugh just the "sneezy" way.
+* Laughing - some people just laugh the "sneezy" way.
 
 ### Problem 3 - AI have some hardware requirements
 
 Initially I've simply created bigger and bigger neural networks to handle all the subtle edge-cases until I've finally was able to achieve 99,97% accuracy in validation dataset and have almost perfect sneeze-detection model. Problem is - I needed to detect sneezes in realtime. Using this big model required something like RTX 2060 GPU running constantly at full power. Raspberry Pi can provide only small fraction of this performance, so I had to optimize the neural architecture big way.
 
-Over the course of few weeks I've created and trained over 200 different networks, one after another, to test what changes will give most performance improvement with minimal accuracy reduction.
+Over the course of few weeks I've created and trained over 200 different networks, one after another, to test which changes will give most performance improvement with minimal accuracy reduction.
 
 The optimal network I found can run smoothly on Raspberry Pi and have still decent 93% accuracy. 
 
-To avoid false positives from a single check I've added additional threashold - one positive detection still don't trigger the response. To trigger it a few checks in a row (usually over the span of 500 ms) must be classified as positive.
+To avoid false positives from a single check I've added additional threashold - one positive detection still don't trigger the response. To trigger "Gesundheit" a few checks in a row (usually over the span of 500 ms) must be classified as positive.
 
+With this workaround even Raspberry Pi provides satysfying results.
 
 ## How to build your own Gesundheit-Machine?
 
@@ -108,9 +109,22 @@ Because the dataset I've used for training consist of fragments of YouTube video
 
 If you want to create dataset yourself, you can use `train.py` file to train neural network on it, but out-of-the-box retraining the dataset is not possible.
 
+### Add your own voices
+
+If you want to add your own responses simply record them somewhere, save as WAV file and put them into "gesundheits" directory. Each time a sneeze is detected one of the files (chosen randomly) will be played.
+
 ## Some statistics
 
 * Total work time: many, many weeks.
 * Dataset used for training: over 130.000 samples of 1 second audio (12 GB in wav format)
 * Amount of different neural models tested: over 200.
+* Final neural network size: 1.8 MB.
 * Final training time: about 20 minutes on one Titan Xp GPU.
+* Over 200 recorded responses done by two voice actresses.
+* Animals hurt in the procces of making this device: 0.
+
+## Plans for future
+
+* Make it work as a mobile app.
+* Get Morgan Freeman to record "Bless you" for English version.
+* Expand it with a tissue dispenser module.
