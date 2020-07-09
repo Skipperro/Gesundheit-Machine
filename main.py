@@ -147,7 +147,7 @@ def update_plot(frame):
             #    plotdata[-shift:, :] = data[:shift]
              #   data=[]
 
-        if time.time() - last_sneeze > 0.3 and plotdata.max() > 0.1:
+        if time.time() - last_sneeze > 3.0 and plotdata.max() > 0.1:
             X.append(normalize_array(np.array(plotdata)))
 
             if time.time() - last_ai_check > 0.5:
@@ -164,7 +164,7 @@ def update_plot(frame):
                     prob = preds[i][0]
                     if prob > maxprob:
                         maxprob = prob
-                    if time.time() - last_sneeze > 1.0 and prob > (args.threshold / 100.0):
+                    if time.time() - last_sneeze > 5.0 and prob > (args.threshold / 100.0):
                         sneeze_count += 1
 
                         if sneeze_count > args.samples:
