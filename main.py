@@ -73,7 +73,7 @@ parser.add_argument(
     '-t', '--threshold', type=int, default=60,
     help='threshold for counting as positive (default: %(default)s)')
 parser.add_argument(
-    '-s', '--samples', type=int, default=6,
+    '-s', '--samples', type=int, default=3,
     help='threshold for positive samples to trigger response (default: %(default)s)')
 args = parser.parse_args(remaining)
 if any(c < 1 for c in args.channels):
@@ -131,8 +131,8 @@ def update_plot(frame):
 
     while len(data) > 0:
         #print(len(data))
-        if len(data) > 5000:
-            shift = 5000
+        if len(data) > 10000:
+            shift = 10000
             plotdata = np.roll(plotdata, -shift, axis=0)
             plotdata[-shift:, :] = data[:shift]
             data = data[shift:]
@@ -199,7 +199,7 @@ try:
 
     with stream:
         while True:
-            time.sleep(0.1)
+            time.sleep(0.2)
             update_plot(1)
         #plt.show()
 except Exception as e:
