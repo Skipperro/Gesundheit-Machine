@@ -125,7 +125,7 @@ def update_plot(frame):
     # Get the new data
     while len(data) < 20000:
         try:
-            data = q.get(block=True, timeout=10) # get_nowait()
+            data = q.get(block=True, timeout=1.0) # get_nowait()
         except queue.Empty:
             break
 
@@ -191,15 +191,15 @@ try:
 
 
 
-    # Blocksize=20000 to prevent input overflow on Raspberry Pi.
+    # Blocksize=40000 to prevent input overflow on Raspberry Pi.
     stream = sd.InputStream(
-        device=args.device, blocksize=20000, channels=max(args.channels),
+        device=args.device, blocksize=40000, channels=max(args.channels),
         samplerate=args.samplerate, callback=audio_callback)
     #ani = FuncAnimation(fig, update_plot, interval=args.interval, blit=True)
 
     with stream:
         while True:
-            time.sleep(0.2)
+            time.sleep(0.1)
             update_plot(1)
         #plt.show()
 except Exception as e:
