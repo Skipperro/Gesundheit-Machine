@@ -62,7 +62,7 @@ Initially I've simply created bigger and bigger neural networks to handle all th
 
 Over the course of few weeks I've created and trained over 200 different networks, one after another, to test which changes will give most performance improvement with minimal accuracy reduction.
 
-The optimal network I found can run smoothly on Raspberry Pi and have still decent 93% accuracy. 
+The optimal network I found can run smoothly on Raspberry Pi and have still decent 93% accuracy. It is optimized for low CPU utilization at the cost of high RAM usage. It can check over 10 samples per second while keeping Raspberry under 80°C.
 
 To avoid false positives from a single check I've added additional threashold - one positive detection still don't trigger the response. To trigger "Gesundheit" a few checks in a row (usually over the span of 500 ms) must be classified as positive.
 
@@ -118,13 +118,14 @@ If you want to add your own responses simply record them somewhere, save as WAV 
 * Total work time: many, many weeks. Much more than I'm willing to admit.
 * Dataset used for training: over 130.000 samples of 1 second audio (12 GB in wav format)
 * Amount of different neural models tested: over 200.
-* Final neural network size: only 1.8 MB!
+* Final neural network size: only 620 KB!
 * Final training time: about 20 minutes on single Titan Xp GPU.
 * Over 200 recorded responses done by two voice actresses.
 * Animals hurt in the procces of making this device: 0.
 
 ## Plans/ideas for the future
 
+* Optimize it even further.
 * Make it work as a mobile app.
 * Get Morgan Freeman to record "Bless you" for English version.
 * Expand it with a tissue dispenser module.
