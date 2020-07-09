@@ -115,6 +115,7 @@ def normalize_array(arr):
     return arr / (np.max(np.abs(arr)))
 
 X = []
+last_ai_check = time.time()
 
 def update_plot(frame):
     global X
@@ -122,10 +123,11 @@ def update_plot(frame):
     global sneeze_count
     global last_sneeze
     global last_capture
+    global last_ai_check
 
     data = []
     # Get the new data
-    while len(data) < 44100:
+    while len(data) < 20000:
         try:
             data = q.get(block=True, timeout=10.0) # get_nowait()
         except queue.Empty:
@@ -146,11 +148,12 @@ def update_plot(frame):
              #   data=[]
 
         if time.time() - last_sneeze > 0.3 and plotdata.max() > 0.1:
-            X.append(plotdata)
+            X.append(normalize_array(np.array(plotdata)))
 
-            if len(X) > 10:
+            if time.time() - last_ai_check > 0.5:
+                last_ai_check = time.time()
                 X = np.array(X)
-                X = normalize_array(X)
+                #X = normalize_array(X)
                 start = time.time()
                 preds = model.predict(X)
                 X = []
@@ -165,7 +168,7 @@ def update_plot(frame):
                         sneeze_count += 1
 
                         if sneeze_count > args.samples:
-                            print('SNEEZE DETECTED!!')
+                            print(str(maxprob) + ' SNEEZE DETECTED!! ')
                             if args.capture:
                                 last_capture = time.time()
                                 allcaptures = os.listdir('./captures/')
@@ -204,9 +207,9 @@ try:
 
 
 
-    # Blocksize=44100 to prevent input overflow on Raspberry Pi.
+    # Blocksize=20000 to prevent input overflow on Raspberry Pi.
     stream = sd.InputStream(
-        device=args.device, blocksize=44100, channels=max(args.channels),
+        device=args.device, blocksize=20000, channels=max(args.channels),
         samplerate=args.samplerate, callback=audio_callback)
     #ani = FuncAnimation(fig, update_plot, interval=args.interval, blit=True)
 
