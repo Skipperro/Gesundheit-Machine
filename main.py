@@ -146,7 +146,7 @@ def update_plot(frame):
                 data=[]
 
         if time.time() - last_sneeze > 0.3 and plotdata.max() > 0.1:
-            X = [plotdata]
+            X = [plotdata, plotdata, plotdata, plotdata]
             X = np.array(X)
             X = normalize_array(X)
             start = time.time()
