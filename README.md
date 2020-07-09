@@ -42,7 +42,7 @@ At this point I was pretty convinced, that I own a best sneeze-detection dataset
 
 ### Problem 2 - Not all sneezes are equal
 
-If you want to detect some trigger word like "Alexa", "OK Google" or "Hey Siri", it's way easier that detecting sneeze. People have different voices, but the overall "Trigger-word" melody is roughly the same for everyone. During development of this software I found out, that it is not the case for sneezing. There is as many types of sneeze as there are people. You can have silent squeeks and loud roars, discrete cough or bursting explosion, single or multiple tones. Also the signal itself is much less distinct and shorten than the classical "Trigger-words".
+If you want to detect some trigger word like "Alexa", "OK Google" or "Hey Siri", it's way easier that detecting sneeze. People have different voices, but the overall "Trigger-word" melody is roughly the same for everyone. During development of this software I found out, that it is not the case for sneezing. There is as many types of sneeze as there are people. You can have silent squeeks and loud roars, discrete cough or bursting explosion, single or multiple tones. Also the signal itself is much less distinct and shorter than the classical "Trigger-words" used by current AI Assistants.
 
 That's why there are still some false-positives I simply cannot erradicate from my algorithm, because they are too similar to real sneeze.
 
@@ -51,14 +51,14 @@ Some examples:
 * Saying "Oh Cool!" - hard to manually classify even for me based only on 1-second audio sample.
 * Saying "Albert" or "Apple" the right way - too close to "A-Choo".
 * Banging spoon on a plate - erradicating this pattern vastly reduces detection rate.
-* Screaming kids - too similar to female sneeze.
+* Screaming kids - too similar to many female sneeze examples.
 * Dropping microphone - too similar to sneeze directly into the mic.
 * Blowing into the microphone - same problem.
 * Laughing - some people just laugh the "sneezy" way.
 
 ### Problem 3 - AI have some hardware requirements
 
-Initially I've simply created bigger and bigger neural networks to handle all the subtle edge-cases until I've finally was able to achieve 99,97% accuracy in validation dataset and have almost perfect sneeze-detection model. Problem is - I needed to detect sneezes in realtime. Using this big model required something like RTX 2060 GPU running constantly at full power. Raspberry Pi can provide only small fraction of this performance, so I had to optimize the neural architecture big way.
+Initially I've simply created bigger and bigger neural networks to handle all the subtle edge-cases until I've finally was able to achieve 99,97% accuracy in validation dataset and had almost perfect sneeze-detection model. Problem is - I needed to detect sneezes in realtime. Using this big model required something like RTX 2060 GPU running constantly at full power. Raspberry Pi can provide only small fraction of this performance, so I had to optimize the neural architecture big way.
 
 Over the course of few weeks I've created and trained over 200 different networks, one after another, to test which changes will give most performance improvement with minimal accuracy reduction.
 
@@ -115,15 +115,15 @@ If you want to add your own responses simply record them somewhere, save as WAV 
 
 ## Some statistics
 
-* Total work time: many, many weeks.
+* Total work time: many, many weeks. Much more than I'm willing to admit.
 * Dataset used for training: over 130.000 samples of 1 second audio (12 GB in wav format)
 * Amount of different neural models tested: over 200.
-* Final neural network size: 1.8 MB.
-* Final training time: about 20 minutes on one Titan Xp GPU.
+* Final neural network size: only 1.8 MB!
+* Final training time: about 20 minutes on single Titan Xp GPU.
 * Over 200 recorded responses done by two voice actresses.
 * Animals hurt in the procces of making this device: 0.
 
-## Plans for future
+## Plans/ideas for the future
 
 * Make it work as a mobile app.
 * Get Morgan Freeman to record "Bless you" for English version.

@@ -21,38 +21,10 @@ os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 
 # Create model
-actf = 'tanh'
-drop = 0.1
-neurons = 32
-model = tf.keras.Sequential()
-model.add(tf.keras.layers.InputLayer(input_shape=(44100, 1)))
-model.add(tf.keras.layers.Conv1D(neurons, 4, strides=4, activation=actf,
-    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-    bias_regularizer=regularizers.l2(1e-4),
-    activity_regularizer=regularizers.l2(1e-5)))
-model.add(tf.keras.layers.Dropout(drop))
-model.add(tf.keras.layers.MaxPool1D(4))
-model.add(tf.keras.layers.Conv1D(neurons * 2, 8, strides=4, activation=actf,
-    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-    bias_regularizer=regularizers.l2(1e-4),
-    activity_regularizer=regularizers.l2(1e-5)))
-model.add(tf.keras.layers.Dropout(drop))
-model.add(tf.keras.layers.MaxPool1D(4))
-model.add(tf.keras.layers.Conv1D(neurons * 4, 16, strides=4, activation=actf,
-    kernel_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
-    bias_regularizer=regularizers.l2(1e-4),
-    activity_regularizer=regularizers.l2(1e-5)))
-model.add(tf.keras.layers.Dropout(drop))
-model.add(tf.keras.layers.GlobalMaxPool1D())
-model.add(tf.keras.layers.Dense(1, activation="sigmoid"))
-
-print(model.summary())
-#exit()
-model.compile(optimizer=tf.keras.optimizers.Adadelta(1), loss='mse', metrics=['acc'])
 try:
-    model.load_weights('model.h5', True, True)
-except:
-    print('Unable to load weights')
+    model = tf.keras.models.load_model('model.keras')
+except Exception as e:
+    print(e)
     exit()
 
 def int_or_str(text):
