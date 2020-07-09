@@ -1,0 +1,13 @@
+[Unit]
+Description=Gesundheit-Machine
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+User=pi
+ExecStart=/home/pi/Gesundheit-Machine /home/miniconda3/envs/Gesundheit-Machine/bin/python main.py
+
+[Install]
+WantedBy=multi-user.target
