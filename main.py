@@ -148,9 +148,11 @@ def update_plot(frame):
         if time.time() - last_sneeze > 0.3 and plotdata.max() > 0.1:
             X = [plotdata]
             X = np.array(X)
+            start = time.time()
             preds = model.predict(normalize_array(X))
             prob = preds[0][0]
             print(prob)
+            print("time: " + str(time.time()-start))
             if time.time() - last_sneeze > 1.0 and prob > (args.threshold / 100.0):
                 sneeze_count += 1
 
