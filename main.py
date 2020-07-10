@@ -129,7 +129,7 @@ def update_plot(frame):
 
     data = []
     # Get the new data
-    while len(data) < 20000:
+    while len(data) < 441000:
         try:
             data = q.get(block=True, timeout=10.0) # get_nowait()
         except queue.Empty:
