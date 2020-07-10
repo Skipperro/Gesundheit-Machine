@@ -25,4 +25,14 @@ def blessingasync(sc):
     th = threading.Thread(target=blessing, args=[sc])
     th.start()
 
-blessingasync(soundcard)
+def bootsound(sc):
+    try:
+        devicestring = ''
+        if len(sc) > 1:
+            devicestring = ' -D ' + sc
+        os.system('aplay activation.wav' + devicestring)
+        os.system('aplay activation.wav' + devicestring)
+    except:
+        print('PROBLEM WITH SOUND!')
+
+bootsound(soundcard)

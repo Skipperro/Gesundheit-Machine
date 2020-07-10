@@ -111,8 +111,17 @@ def blessing(sc):
         os.system('aplay activation.wav' + devicestring)
         os.system('aplay ' + './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]) + devicestring)
     except:
-        os.system('aplay activation.wav')
-        os.system('aplay ' + './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]))
+        print('PROBLEM WITH SOUND!')
+
+def bootsound(sc):
+    try:
+        devicestring = ''
+        if len(sc) > 1:
+            devicestring = ' -D ' + sc
+        os.system('aplay activation.wav' + devicestring)
+        os.system('aplay activation.wav' + devicestring)
+    except:
+        print('PROBLEM WITH SOUND!')
 
 def blessingasync(sc):
     th = threading.Thread(target=blessing, args=[sc])
@@ -220,6 +229,7 @@ def update_plot(frame):
     #return lines
 
 
+
 try:
     if args.samplerate is None:
         device_info = sd.query_devices(args.device, 'input')
@@ -235,6 +245,8 @@ try:
         device=args.device, blocksize=44100, channels=max(args.channels),
         samplerate=args.samplerate, callback=audio_callback)
     #ani = FuncAnimation(fig, update_plot, interval=args.interval, blit=True)
+
+    bootsound(soundcard)
 
     with stream:
         while True:
