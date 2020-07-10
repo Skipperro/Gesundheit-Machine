@@ -153,7 +153,7 @@ def update_plot(frame):
         if time.time() - last_sneeze > 3.0 and plotdata.max() > 0.1:
             X.append(normalize_array(np.array(plotdata)))
 
-            if len(data) <= 4410 and time.time() - last_ai_check > 0.5:
+            if len(data) <= 4410 and len(X >= 5):
                 last_ai_check = time.time()
                 X = np.array(X)
                 #X = normalize_array(X)
