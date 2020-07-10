@@ -10,15 +10,20 @@ import os
 from pydub import AudioSegment
 from pydub.playback import play
 from scipy.io.wavfile import read, write
-from tensorflow.keras import regularizers
 import tensorflow as tf
 import uuid
 import random
+import threading
 
 # Uncomment to disable GPU support
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
+soundcard = 'plughw:CARD=AUDIO,DEV=0'
+cards = os.system('aplay -L')
+if not str(cards).__contains__(soundcard):
+    print('Desired soundcard not found! Fallback to default soundcard!')
+    soundcard = ''
 
 # Create model
 try:
@@ -96,6 +101,21 @@ last_capture = time.time()
 
 os.system('clear')
 print('Gesundheit Maschine - Listening...')
+
+def blessing(sc):
+    try:
+        devicestring = ''
+        if len(sc) > 1:
+            devicestring = ' -D ' + sc
+        os.system('aplay activation.wav' + devicestring)
+        os.system('aplay ' + './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]) + devicestring)
+    except:
+        os.system('aplay activation.wav')
+        os.system('aplay ' + './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]))
+
+def blessingasync(sc):
+    th = threading.Thread(target=blessing, args=[sc])
+    th.start()
 
 
 # Reads audio file and outputs it as numpy array normalized in range from -1 to 1
@@ -180,11 +200,7 @@ def update_plot(frame):
                                 write('./captures/' + str(uuid.uuid4()) + '.wav', 44100,
                                       np.array(X[0] * 32000, dtype='int16'))
                                 #continue
-                            song = AudioSegment.from_wav("./activation.wav")
-                            play(song)
-                            song = AudioSegment.from_wav(
-                                './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]))
-                            play(song)
+                            blessingasync(soundcard)
                             last_sneeze = time.time()
                     else:
                         if sneeze_count > 0:
