@@ -129,7 +129,7 @@ def update_plot(frame):
 
     data = []
     # Get the new data
-    while len(data) < 441000:
+    while len(data) < 20000:
         try:
             data = q.get(block=True, timeout=10.0) # get_nowait()
         except queue.Empty:
@@ -152,7 +152,7 @@ def update_plot(frame):
         if time.time() - last_sneeze > 3.0 and plotdata.max() > 0.1:
             X.append(normalize_array(np.array(plotdata)))
 
-            if len(data) < 4410:
+            if len(data) < 4410 and last_ai_check > 0.5:
                 last_ai_check = time.time()
                 X = np.array(X)
                 #X = normalize_array(X)
