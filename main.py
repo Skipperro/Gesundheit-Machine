@@ -127,17 +127,18 @@ def update_plot(frame):
     global last_ai_check
     global last_silence
 
-    data = []
+    data = np.empty((0,1), 'float32')
     # Get the new data
     while len(data) < 20000:
         try:
-            data = q.get(block=True, timeout=10.0) # get_nowait()
+            newdata = q.get(block=True, timeout=0.2) # get_nowait()
+            data = np.concatenate((data, newdata), axis=0) # data + newdata
         except queue.Empty:
             break
 
-    while len(data) > 4410:
+    while len(data) >= 4410:
         #print(len(data))
-        if len(data) > 4410:
+        if len(data) >= 4410:
             shift = 4410
             plotdata = np.roll(plotdata, -shift, axis=0)
             plotdata[-shift:, :] = data[:shift]
@@ -152,7 +153,7 @@ def update_plot(frame):
         if time.time() - last_sneeze > 3.0 and plotdata.max() > 0.1:
             X.append(normalize_array(np.array(plotdata)))
 
-            if len(data) < 4410 and last_ai_check > 0.5:
+            if len(data) <= 4410 and time.time() - last_ai_check > 0.5:
                 last_ai_check = time.time()
                 X = np.array(X)
                 #X = normalize_array(X)
@@ -212,9 +213,9 @@ try:
 
 
 
-    # Blocksize=20000 to prevent input overflow on Raspberry Pi.
+    # Blocksize=44100 to prevent input overflow on Raspberry Pi.
     stream = sd.InputStream(
-        device=args.device, blocksize=20000, channels=max(args.channels),
+        device=args.device, blocksize=44100, channels=max(args.channels),
         samplerate=args.samplerate, callback=audio_callback)
     #ani = FuncAnimation(fig, update_plot, interval=args.interval, blit=True)
 
