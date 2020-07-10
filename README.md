@@ -16,6 +16,8 @@ It's a piece of software written in Python that uses Deep Neural Network created
 
 The software constantly reads audio input from microphone and every few milliseconds sends most recent 1-second audio sample to neural network for classification. The network classifies each sample and decides if it sounds like a sneeze or not. If few samples in a row are positively classified a response sequence is triggered.
 
+The software is running on simple Raspberry Pi with microphone and speaker connected to it.
+
 ## Was it hard to develop?
 
 Yes!
@@ -30,19 +32,19 @@ Luckly, for some weird reason, there is many compilations of people sneezing on 
 
 For training I've also needed some examples of audio samples that are not sneeze. To generate them I've downloaded many other YouTube videos with ambient noise like office space, construction zone, party music, pub conversations, screaming kids ect. and wrote a code that would randomly cut those audio into 1-second samples.
 
-To further improve detection accuracy I've also started to combine non-sneeze backgroud sounds with sneeze sample overlayed on top of it, so the AI could clearly see the difference between the two.
+To further improve detection accuracy I've also started to combine non-sneeze background sounds with sneeze sample overlayed on top of it, so the AI could clearly see the difference between the two.
 
 But even this dataset is not perfect. For example, there is a VAST overrepresentation of female sneezes, because for some weird reason there are almost only "sneezing girls" compilations on YouTube and almost none of "boys", so naturally my AI is better on recognizing if a female sneeze than if a male sneeze.
 
 I've also figured out, that it's better to miss some sneezes rather than trigger false-positive reaction when noone sneezed. To prevent false-positives I've created a first version of detection AI, set parameters to be very sensitive and let it listen... for days. Each time it thought it heard sneeze this 1-second audio sample was saved. After few days of listening what happens at my home and office I had thousends of detected sneezes that were false-positive, so I've added those to the dataset as well (as non-sneeze samples).
 
-I have now over 130.000 unique samples of 1-second audio, about 30% of them with sneeze, occupying about 12 GB of space.
+I have now over 130.000 unique samples of 1-second audio, about 30% of them with sneeze, occupying about 12 GB of space. I can also mix those samples freely to create more examples as there are atoms in the universe.
 
 At this point I was pretty convinced, that I own a best sneeze-detection dataset on the planet. :)
 
 ### Problem 2 - Not all sneezes are equal
 
-If you want to detect some trigger word like "Alexa", "OK Google" or "Hey Siri", it's way easier that detecting sneeze. People have different voices, but the overall "Trigger-word" melody is roughly the same for everyone. During development of this software I found out, that it is not the case for sneezing. There is as many types of sneeze as there are people. You can have silent squeeks and loud roars, discrete cough or bursting explosion, single or multiple tones. Also the signal itself is much less distinct and shorter than the classical "Trigger-words" used by current AI Assistants.
+If you want to detect some trigger word like "Alexa", "OK Google" or "Hey Siri", it's way easier that detecting sneeze. People have different voices, but the overall "Trigger-word" melody is roughly the same for everyone. During development of this software I found out, that it is not the case for sneezing. There is as many types of sneeze as there are people. You can have silent squeeks or loud roars, discrete cough or bursting explosion, single or multiple tones. Also the signal itself is much less distinct and shorter than the classical "Trigger-words" used by current AI Assistants.
 
 That's why there are still some false-positives I simply cannot erradicate from my algorithm, because they are too similar to real sneeze.
 
@@ -53,7 +55,7 @@ Some examples:
 * Banging spoon on a plate - erradicating this pattern vastly reduces detection rate.
 * Screaming kids - too similar to many female sneeze examples.
 * Dropping microphone - too similar to sneeze directly into the mic.
-* Blowing into the microphone - same problem.
+* Blowing into the microphone or rubbing it - same problem.
 * Laughing - some people just laugh the "sneezy" way.
 
 ### Problem 3 - AI have some hardware requirements
@@ -80,13 +82,13 @@ With this workaround even Raspberry Pi provides satysfying results.
 
 ### Building the hardware
 
-Simply put Raspberry Pi in chassis, connect microphone and speaker to it then install some Linux based OS (using systemd to install software as a service).
+Simply put Raspberry Pi in chassis, connect microphone and speaker to it then install some Linux based OS (ideally one using systemd to allow installation of software as a service).
 
 ### Install Gesundheit-Machine software
 
-* Install Python3 (I've used version 3.6 but it should work with any 3.X version). I recommend installing miniconda3 and create dedicated virtual environment.
+* Install Python3 (I've used version 3.6 but it should work with any 3.X version).
 * Clone this repository.
-* Install all the python packages from requirements.txt file.
+* Install all the python packages from requirements.txt file. Tensorflow 2.2.0 may require manual download from github.
 * Run main.py with python. AI model is already included in the repository.
 
 ### Install service to run automatically on start
@@ -96,7 +98,7 @@ First edit gesundheitmachine.service file.
 * Change "User" to proper user name in your system.
 * Change "ExecStart" to proper working directory path and python executable path.
 * Save/copy this file to `/etc/systemd/system/gesundheitmachine.service`.
-* Run `systemctl enable gesundheitmachine` and reboot the system.
+* Run `sudo systemctl enable gesundheitmachine` and reboot the system.
 * Gesundheit-Machine should be running automatically on the background.
 
 At this point you can disconnect mouse, keyboard and display and deploy the Gesundheit-Machine to it's target location.
@@ -129,3 +131,4 @@ If you want to add your own responses simply record them somewhere, save as WAV 
 * Make it work as a mobile app.
 * Get Morgan Freeman to record "Bless you" for English version.
 * Expand it with a tissue dispenser module.
+* Add some LEDs to light-up while the sound is played.
