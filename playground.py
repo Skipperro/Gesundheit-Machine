@@ -5,7 +5,7 @@ import threading
 import time
 
 soundcard = 'plughw:CARD=AUDIO,DEV=0'
-cards = os.system('aplay -L')
+cards = os.popen('aplay -L').read()
 if str(cards).find(soundcard) < 0:
     print('Desired soundcard not found! Fallback to default soundcard!')
     soundcard = ''
@@ -19,8 +19,7 @@ def blessing(sc):
         os.system('aplay activation.wav' + devicestring)
         os.system('aplay ' + './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]) + devicestring)
     except:
-        os.system('aplay activation.wav')
-        os.system('aplay ' + './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]))
+        print('PROBLEM WITH SOUND!')
 
 def blessingasync(sc):
     th = threading.Thread(target=blessing, args=[sc])

@@ -20,7 +20,7 @@ os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 soundcard = 'plughw:CARD=AUDIO,DEV=0'
-cards = os.system('aplay -L')
+cards = os.popen('aplay -L').read()
 if str(cards).find(soundcard) < 0:
     print('Desired soundcard not found! Fallback to default soundcard!')
     soundcard = ''
