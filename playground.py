@@ -6,7 +6,7 @@ import time
 
 soundcard = 'plughw:CARD=AUDIO,DEV=0'
 cards = os.system('aplay -L')
-if not str(cards).__contains__(soundcard):
+if not soundcard in cards:
     print('Desired soundcard not found! Fallback to default soundcard!')
     soundcard = ''
 
