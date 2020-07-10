@@ -21,7 +21,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 soundcard = 'plughw:CARD=AUDIO,DEV=0'
 cards = os.system('aplay -L')
-if not soundcard in cards:
+if str(cards).find(soundcard) < 0:
     print('Desired soundcard not found! Fallback to default soundcard!')
     soundcard = ''
     time.sleep(5.0)
