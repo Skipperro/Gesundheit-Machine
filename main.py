@@ -1,4 +1,4 @@
-#!./venv/bin python3
+#! python3
 
 import numpy as np
 import sounddevice as sd
@@ -7,8 +7,6 @@ import argparse
 import queue
 import sys
 import os
-from pydub import AudioSegment
-from pydub.playback import play
 from scipy.io.wavfile import read, write
 import tensorflow as tf
 import uuid
@@ -19,6 +17,7 @@ import threading
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
+# Configure sound card
 soundcard = 'plughw:CARD=AUDIO,DEV=0'
 cards = os.popen('aplay -L').read()
 if str(cards).find(soundcard) < 0:
@@ -100,9 +99,9 @@ sneeze_count = 0
 last_sneeze = time.time()
 last_capture = time.time()
 
-#os.system('clear')
 print('Gesundheit Maschine - Listening...')
 
+# Plays activation sound and random Gesundheit
 def blessing(sc):
     try:
         devicestring = ''
@@ -113,6 +112,7 @@ def blessing(sc):
     except:
         print('PROBLEM WITH SOUND!')
 
+# Plays activation sound two times as a boot sequence
 def bootsound(sc):
     try:
         devicestring = ''
@@ -123,6 +123,7 @@ def bootsound(sc):
     except:
         print('PROBLEM WITH SOUND!')
 
+# Plays Gesundheit sound on a separate thread
 def blessingasync(sc):
     th = threading.Thread(target=blessing, args=[sc])
     th.start()
