@@ -73,7 +73,7 @@ parser.add_argument(
     '-t', '--threshold', type=int, default=60,
     help='threshold for counting as positive (default: %(default)s)')
 parser.add_argument(
-    '-s', '--samples', type=int, default=4,
+    '-s', '--samples', type=int, default=2,
     help='threshold for positive samples to trigger response (default: %(default)s)')
 args = parser.parse_args(remaining)
 if any(c < 1 for c in args.channels):
@@ -116,6 +116,7 @@ def normalize_array(arr):
 
 X = []
 last_ai_check = time.time()
+last_silence = time.time()
 
 def update_plot(frame):
     global X
@@ -124,6 +125,7 @@ def update_plot(frame):
     global last_sneeze
     global last_capture
     global last_ai_check
+    global last_silence
 
     data = []
     # Get the new data
@@ -150,16 +152,16 @@ def update_plot(frame):
         if time.time() - last_sneeze > 3.0 and plotdata.max() > 0.1:
             X.append(normalize_array(np.array(plotdata)))
 
-            if time.time() - last_ai_check > 0.5:
+            if len(data) < 4410:
                 last_ai_check = time.time()
                 X = np.array(X)
                 #X = normalize_array(X)
                 start = time.time()
                 preds = model.predict(X)
+                predtimestr = '{:4d}'.format(int((time.time() - start)*1000)) + ' ms'
                 X = []
                 maxprob = 0.0
 
-                print("time: " + str(time.time() - start))
                 for i in range(len(preds)):
                     prob = preds[i][0]
                     if prob > maxprob:
@@ -168,7 +170,7 @@ def update_plot(frame):
                         sneeze_count += 1
 
                         if sneeze_count > args.samples:
-                            print(str(maxprob) + ' SNEEZE DETECTED!! ')
+                            print('SNEEZE DETECTED!!')
                             if args.capture:
                                 last_capture = time.time()
                                 allcaptures = os.listdir('./captures/')
@@ -186,8 +188,11 @@ def update_plot(frame):
                     else:
                         if sneeze_count > 0:
                             sneeze_count = 0
-                print(maxprob)
+                print('Probability: ' + '{:3d}'.format(int(maxprob*100)) + '%   Samples per batch: ' + '{:2d}'.format(len(preds)) + '   Batch time: ' + predtimestr)
         else:
+            if time.time() - last_silence > 1.0:
+                print('Silence...')
+                last_silence = time.time()
             X = []
             if sneeze_count > 0:
                 sneeze_count = 0
