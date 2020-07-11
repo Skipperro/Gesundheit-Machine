@@ -28,15 +28,15 @@ Initially I thought it will be easy, just take any MIT licensed voice-to-text ne
 
 There is no publicly available dataset of sneezes on the Internet. I had to make my own.
 
-Luckly, for some weird reason, there is many compilations of people sneezing on YouTube. Don't know why someone would watch this stuff, but for me it was a base on which I could build my dataset. I've downloaded audio of every "sneeze" YouTube video I could find and manually extracted those 1 second parts where someone sneeze. This was my dataset of extracted sneezes but this was only the first step.
+Luckily, for some weird reason, there is many compilations of people sneezing on YouTube. Don't know why someone would watch this stuff, but for me it was a base on which I could build my dataset. I've downloaded audio of every "sneeze" YouTube video I could find and manually extracted those 1 second parts where someone sneeze. This was my dataset of extracted sneezes but this was only the first step.
 
 For training I've also needed some examples of audio samples that are not sneeze. To generate them I've downloaded many other YouTube videos with ambient noise like office space, construction zone, party music, pub conversations, screaming kids ect. and wrote a code that would randomly cut those audio into 1-second samples.
 
 To further improve detection accuracy I've also started to combine non-sneeze background sounds with sneeze sample overlayed on top of it, so the AI could clearly see the difference between the two.
 
-But even this dataset is not perfect. For example, there is a VAST overrepresentation of female sneezes, because for some weird reason there are almost only "sneezing girls" compilations on YouTube and almost none of "boys", so naturally my AI is better on recognizing if a female sneeze than if a male sneeze.
+But even this dataset is not perfect. For example, there is a VAST over-representation of female sneezes, because for some weird reason there are almost only "sneezing girls" compilations on YouTube and almost none of "boys", so naturally my AI is better on recognizing if a female sneeze than if a male sneeze.
 
-I've also figured out, that it's better to miss some sneezes rather than trigger false-positive reaction when noone sneezed. To prevent false-positives I've created a first version of detection AI, set parameters to be very sensitive and let it listen... for days. Each time it thought it heard sneeze this 1-second audio sample was saved. After few days of listening what happens at my home and office I had thousends of detected sneezes that were false-positive, so I've added those to the dataset as well (as non-sneeze samples).
+I've also figured out, that it's better to miss some sneezes rather than trigger false-positive reaction when nobody sneezed. To prevent false-positives I've created a first version of detection AI, set parameters to be very sensitive and let it listen... for days. Each time it thought it heard sneeze this 1-second audio sample was saved. After few days of listening what happens at my home and office I had thousands of detected sneezes that were false-positive, so I've added those to the dataset as well (as non-sneeze samples).
 
 I have now over 130.000 unique samples of 1-second audio, about 30% of them with sneeze, occupying about 12 GB of space. I can also mix those samples freely to create more examples as there are atoms in the universe.
 
@@ -44,15 +44,15 @@ At this point I was pretty convinced, that I own a best sneeze-detection dataset
 
 ### Problem 2 - Not all sneezes are equal
 
-If you want to detect some trigger word like "Alexa", "OK Google" or "Hey Siri", it's way easier that detecting sneeze. People have different voices, but the overall "Trigger-word" melody is roughly the same for everyone. During development of this software I found out, that it is not the case for sneezing. There is as many types of sneeze as there are people. You can have silent squeeks or loud roars, discrete cough or bursting explosion, single or multiple tones. Also the signal itself is much less distinct and shorter than the classical "Trigger-words" used by current AI Assistants.
+If you want to detect some trigger word like "Alexa", "OK Google" or "Hey Siri", it's way easier that detecting sneeze. People have different voices, but the overall "Trigger-word" melody is roughly the same for everyone. During development of this software I found out, that it is not the case for sneezing. There is as many types of sneeze as there are people. You can have silent squeaks or loud roars, discrete cough or bursting explosion, single or multiple tones. Also the signal itself is much less distinct and shorter than the classical "Trigger-words" used by current AI Assistants.
 
-That's why there are still some false-positives I simply cannot erradicate from my algorithm, because they are too similar to real sneeze.
+That's why there are still some false-positives I simply cannot eradicate from my algorithm, because they are too similar to real sneeze.
 
 Some examples:
 
 * Saying "Oh Cool!" - hard to manually classify even for me based only on 1-second audio sample.
 * Saying "Albert" or "Apple" the right way - too close to "A-Choo".
-* Banging spoon on a plate - erradicating this pattern vastly reduces detection rate.
+* Banging spoon on a plate - eradicating this pattern vastly reduces detection rate.
 * Screaming kids - too similar to many female sneeze examples.
 * Dropping microphone - too similar to sneeze directly into the mic.
 * Blowing into the microphone or rubbing it - same problem.
@@ -66,9 +66,9 @@ Over the course of few weeks I've created and trained over 200 different network
 
 The optimal network I found can run smoothly on Raspberry Pi and have still decent 93% accuracy. It is optimized for low CPU utilization at the cost of high RAM usage. It can check over 10 samples per second while keeping Raspberry under 80°C.
 
-To avoid false positives from a single check I've added additional threashold - one positive detection still don't trigger the response. To trigger "Gesundheit" a few checks in a row (usually over the span of 500 ms) must be classified as positive.
+To avoid false positives from a single check I've added additional threshold - one positive detection still don't trigger the response. To trigger "Gesundheit" a few checks in a row (usually over the span of 500 ms) must be classified as positive.
 
-With this workaround even Raspberry Pi provides satysfying results.
+With this workaround even Raspberry Pi provides satisfying results.
 
 ## How to build your own Gesundheit-Machine?
 
@@ -88,7 +88,7 @@ Simply put Raspberry Pi in chassis, connect microphone and speaker to it then in
 
 * Install Python3 (I've used version 3.6 but it should work with any 3.X version).
 * Clone this repository.
-* Install all the python packages from requirements.txt file. Tensorflow 2.2.0 may require manual download from github.
+* Install all the python packages from requirements.txt file. Tensorflow 2.2.0 may require manual download from GitHub.
 * Run main.py with python. AI model is already included in the repository.
 
 ### Install service to run automatically on start
@@ -103,7 +103,7 @@ First edit gesundheitmachine.service file.
 
 At this point you can disconnect mouse, keyboard and display and deploy the Gesundheit-Machine to it's target location.
 
-### Retriaining the network
+### Retraining the network
 
 If you want to retrain the network yourself it can be complicated.
 
@@ -123,7 +123,7 @@ If you want to add your own responses simply record them somewhere, save as WAV 
 * Final neural network size: only 620 KB!
 * Final training time: about 20 minutes on single Titan Xp GPU.
 * Over 200 recorded responses done by two voice actresses.
-* Animals hurt in the procces of making this device: 0.
+* Animals hurt in the process of making this device: 0.
 
 ## Plans/ideas for the future
 
