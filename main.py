@@ -248,6 +248,7 @@ try:
     #ani = FuncAnimation(fig, update_plot, interval=args.interval, blit=True)
 
     bootsound(soundcard)
+    os.system('git pull')
 
     with stream:
         while True:
