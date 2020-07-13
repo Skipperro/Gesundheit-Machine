@@ -1,45 +1,36 @@
 import os
 import random
 import threading
-
+import simpleaudio as sa
 import time
 
-soundcard = 'plughw:CARD=AUDIO,DEV=0'
-cards = os.popen('aplay -L').read()
-if str(cards).find(soundcard) < 0:
-    print('Desired soundcard not found! Fallback to default soundcard!')
-    soundcard = ''
-
-
-def blessing(sc):
+def blessing():
     try:
-        devicestring = ''
-        if len(sc) > 1:
-            devicestring = ' -D ' + sc
-        os.popen('aplay activation2.wav' + devicestring)
+        os.system('play activation2.wav - q')
         time.sleep(0.5)
-        os.system('aplay ' + './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]) + devicestring)
+        os.system('play ' + './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]) + ' -q')
     except:
         print('PROBLEM WITH SOUND!')
 
-def blessingasync(sc):
-    th = threading.Thread(target=blessing, args=[sc])
+def blessingasync():
+    th = threading.Thread(target=blessing)
     th.start()
 
-def bootsound(sc):
+def bootsound():
     try:
-        devicestring = ''
-        if len(sc) > 1:
-            devicestring = ' -D ' + sc
-        os.popen('aplay activation2.wav' + devicestring)
+        wave_obj = sa.WaveObject.from_wave_file('activation2.wav')
+        wave_obj.play()
+        #os.popen('play activation2.wav -q')
         time.sleep(0.3)
-        os.popen('aplay activation2.wav' + devicestring)
+        wave_obj.play()
+        #os.popen('play activation2.wav -q')
         time.sleep(0.3)
-        os.popen('aplay activation2.wav' + devicestring)
+        wave_obj.play()
+        #os.popen('play activation2.wav -q')
         time.sleep(3.0)
     except:
         print('PROBLEM WITH SOUND!')
 
 time.sleep(2.0)
 
-bootsound(soundcard)
+bootsound()
