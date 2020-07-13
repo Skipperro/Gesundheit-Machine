@@ -10,6 +10,8 @@ You can now do this with the state-of-the-art, AI-powered Gesundheit-Machine, Ma
 
 Gesundheit-Machine will sit on your desk and listen, just like Amazon Alexa, Google Home or Siri in your iPhone. If someone will sneeze nearby, Gesundheit-Machine will detect it and automagically respond with one of pre-recorded message. You don't have to do anything. You can even record your own answers with your voice so people will think that you actually wish them well yourself! It will work even if you are not there, so no sneeze will be left unresponded.
 
+You can check out the test-run on YouTube: https://youtu.be/GXjQAP-rySY
+
 ## But seriously... how it technically works?
 
 It's a piece of software written in Python that uses Deep Neural Network created in Tensorflow/Keras. The neural network is trained to classify 1 second audio sample to tell if it sounds like a sneeze or not. 
