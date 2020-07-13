@@ -12,18 +12,11 @@ import tensorflow as tf
 import uuid
 import random
 import threading
+import simpleaudio as sa
 
 # Uncomment to disable GPU support
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
-
-# Configure sound card
-soundcard = 'plughw:CARD=AUDIO,DEV=0'
-cards = os.popen('aplay -L').read()
-if str(cards).find(soundcard) < 0:
-    print('Desired soundcard not found! Fallback to default soundcard!')
-    soundcard = ''
-    time.sleep(5.0)
 
 # Create model
 try:
@@ -102,35 +95,32 @@ last_capture = time.time()
 print('Gesundheit Maschine - Listening...')
 
 # Plays activation sound and random Gesundheit
-def blessing(sc):
+def blessing():
     try:
-        devicestring = ''
-        if len(sc) > 1:
-            devicestring = ' -D ' + sc
-        os.popen('aplay activation2.wav' + devicestring)
+        activation = sa.WaveObject.from_wave_file('activation2.wav')
+        gesundheit = sa.WaveObject.from_wave_file('./gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]))
+        activation.play()
         time.sleep(0.5)
-        os.system('aplay ' + './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]) + devicestring)
+        gesundheit.play()
     except:
         print('PROBLEM WITH SOUND!')
 
 # Plays activation sound three times as a boot sequence
-def bootsound(sc):
+def bootsound():
     try:
-        devicestring = ''
-        if len(sc) > 1:
-            devicestring = ' -D ' + sc
-        os.popen('aplay activation2.wav' + devicestring)
+        wave_obj = sa.WaveObject.from_wave_file('activation2.wav')
+        wave_obj.play()
         time.sleep(0.3)
-        os.popen('aplay activation2.wav' + devicestring)
+        wave_obj.play()
         time.sleep(0.3)
-        os.popen('aplay activation2.wav' + devicestring)
+        wave_obj.play()
         time.sleep(3.0)
     except:
         print('PROBLEM WITH SOUND!')
 
 # Plays Gesundheit sound on a separate thread
-def blessingasync(sc):
-    th = threading.Thread(target=blessing, args=[sc])
+def blessingasync():
+    th = threading.Thread(target=blessing)
     th.start()
 
 
@@ -218,7 +208,7 @@ def update_plot(frame):
                                 write('./captures/' + str(uuid.uuid4()) + '.wav', 44100,
                                       np.array(X[0] * 32000, dtype='int16'))
                                 #continue
-                            blessingasync(soundcard)
+                            blessingasync()
                             last_sneeze = time.time()
                     else:
                         if sneeze_count > 0:
@@ -254,9 +244,10 @@ try:
         samplerate=args.samplerate, callback=audio_callback)
     #ani = FuncAnimation(fig, update_plot, interval=args.interval, blit=True)
 
-    bootsound(soundcard)
     os.system('git pull')
     os.system('clear')
+    bootsound()
+
 
     with stream:
         while True:
