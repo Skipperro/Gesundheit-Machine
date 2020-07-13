@@ -16,7 +16,8 @@ def blessing(sc):
         devicestring = ''
         if len(sc) > 1:
             devicestring = ' -D ' + sc
-        os.system('aplay activation.wav' + devicestring)
+        os.popen('aplay activation2.wav' + devicestring)
+        time.sleep(0.5)
         os.system('aplay ' + './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]) + devicestring)
     except:
         print('PROBLEM WITH SOUND!')
@@ -30,9 +31,15 @@ def bootsound(sc):
         devicestring = ''
         if len(sc) > 1:
             devicestring = ' -D ' + sc
-        os.system('aplay activation.wav' + devicestring)
-        os.system('aplay activation.wav' + devicestring)
+        os.popen('aplay activation2.wav' + devicestring)
+        time.sleep(0.3)
+        os.popen('aplay activation2.wav' + devicestring)
+        time.sleep(0.3)
+        os.popen('aplay activation2.wav' + devicestring)
+        time.sleep(3.0)
     except:
         print('PROBLEM WITH SOUND!')
+
+time.sleep(2.0)
 
 bootsound(soundcard)

@@ -107,19 +107,24 @@ def blessing(sc):
         devicestring = ''
         if len(sc) > 1:
             devicestring = ' -D ' + sc
-        os.system('aplay activation.wav' + devicestring)
+        os.popen('aplay activation2.wav' + devicestring)
+        time.sleep(0.5)
         os.system('aplay ' + './gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]) + devicestring)
     except:
         print('PROBLEM WITH SOUND!')
 
-# Plays activation sound two times as a boot sequence
+# Plays activation sound three times as a boot sequence
 def bootsound(sc):
     try:
         devicestring = ''
         if len(sc) > 1:
             devicestring = ' -D ' + sc
-        os.system('aplay activation.wav' + devicestring)
-        os.system('aplay activation.wav' + devicestring)
+        os.popen('aplay activation2.wav' + devicestring)
+        time.sleep(0.3)
+        os.popen('aplay activation2.wav' + devicestring)
+        time.sleep(0.3)
+        os.popen('aplay activation2.wav' + devicestring)
+        time.sleep(3.0)
     except:
         print('PROBLEM WITH SOUND!')
 
@@ -202,7 +207,9 @@ def update_plot(frame):
                         sneeze_count += 1
 
                         if sneeze_count > args.samples:
-                            print('SNEEZE DETECTED!!')
+                            print('==================================')
+                            print('       SNEEZE DETECTED!!')
+                            print('==================================')
                             if args.capture:
                                 last_capture = time.time()
                                 allcaptures = os.listdir('./captures/')
@@ -249,6 +256,7 @@ try:
 
     bootsound(soundcard)
     os.system('git pull')
+    os.system('clear')
 
     with stream:
         while True:
