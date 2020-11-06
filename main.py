@@ -98,7 +98,9 @@ print('Gesundheit Maschine - Listening...')
 def blessing():
     try:
         activation = sa.WaveObject.from_wave_file('activation2.wav')
-        gesundheit = sa.WaveObject.from_wave_file('./gesundheits/' + random.choice([f for f in os.listdir('./gesundheits/')]))
+        selected_gesundheit = random.choice([f for f in os.listdir('./gesundheits/')])
+        print('Playing recorded answer: ' + selected_gesundheit)
+        gesundheit = sa.WaveObject.from_wave_file('./gesundheits/' + selected_gesundheit)
         activation.play()
         time.sleep(0.5)
         gesundheit.play()
@@ -197,6 +199,7 @@ def update_plot(frame):
                         sneeze_count += 1
 
                         if sneeze_count > args.samples:
+                            last_sneeze = time.time()
                             print('==================================')
                             print('       SNEEZE DETECTED!!')
                             print('==================================')
@@ -209,11 +212,12 @@ def update_plot(frame):
                                       np.array(X[0] * 32000, dtype='int16'))
                                 #continue
                             blessingasync()
-                            last_sneeze = time.time()
+                            time.sleep(3.0)
                     else:
                         if sneeze_count > 0:
                             sneeze_count = 0
-                print('Probability: ' + '{:3d}'.format(int(maxprob*100)) + '%   Samples per batch: ' + '{:2d}'.format(len(preds)) + '   Batch time: ' + predtimestr)
+                if time.time() - last_sneeze > 5.0:
+                    print('Probability: ' + '{:3d}'.format(int(maxprob*100)) + '%   Samples per batch: ' + '{:2d}'.format(len(preds)) + '   Batch time: ' + predtimestr)
         else:
             if time.time() - last_silence > 1.0:
                 print('Silence...')
